@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Quantum.Simulators" Version="0.10.1912.2614-alpha" />
+    <PackageReference Include="Microsoft.Quantum.Simulators" Version="0.10.2001.611-beta" />
   </ItemGroup>
 
 </Project>

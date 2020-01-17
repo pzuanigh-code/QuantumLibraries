@@ -6,6 +6,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>Microsoft.Quantum.Standard.Tests</AssemblyName>
     <IncludeQsharpCorePackages>false</IncludeQsharpCorePackages>
+    <QscExe>dotnet C:\Repos\Solid\submodules\qsharp-compiler\src\QsCompiler\CommandLineTool\bin\Debug\netcoreapp3.0\qsc.dll</QscExe>
   </PropertyGroup>
 
   <ItemGroup>

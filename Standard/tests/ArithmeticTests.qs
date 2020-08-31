@@ -2,10 +2,13 @@
 // Licensed under the MIT License.
 namespace Microsoft.Quantum.ArithmeticTests {
     open Microsoft.Quantum.Arithmetic;
+    open Microsoft.Quantum.Arrays;
     open Microsoft.Quantum.Canon;
+    open Microsoft.Quantum.Convert;
     open Microsoft.Quantum.Math;
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Diagnostics;
+    open Microsoft.Quantum.Measurement;
     
     
     operation InPlaceXorTestHelper (testValue : Int, numberOfQubits : Int) : Unit {
@@ -173,7 +176,48 @@ namespace Microsoft.Quantum.ArithmeticTests {
             }
         }
     }
-    
+
+    @Test("ToffoliSimulator")
+    operation TestLessThanConstantUsingRippleCarry() : Unit {
+        TestLessThanConstantUsingRippleCarryForBitWidth(3);
+        TestLessThanConstantUsingRippleCarryForBitWidth(4);
+    }
+
+    internal operation TestLessThanConstantUsingRippleCarryForBitWidth(bitwidth : Int) : Unit {
+        using ((input, output) = (Qubit[bitwidth], Qubit())) {
+            let inputReg = LittleEndian(input);
+            for (qinput in 0..2^bitwidth - 1) {
+                for (cinput in 0..2^bitwidth - 1) {
+                    within {
+                        ApplyXorInPlace(qinput, inputReg);
+                    } apply {
+                        LessThanConstantUsingRippleCarry(IntAsBigInt(cinput), inputReg, output);
+                        EqualityFactB(IsResultOne(MResetZ(output)), qinput < cinput, $"Unexpected result for cinput = {cinput} and qinput = {qinput}");
+                    }
+                }
+            }
+        }
+    }
+
+    @Test("ResourcesEstimator")
+    operation TestLessThanConstantUsingRippleCarryOperationCalls() : Unit {
+        let tCounts = [0, 12, 8, 12, 4, 12, 8, 12, 0, 12, 8, 12, 4, 12, 8, 12, 0];
+        let qubitCounts = [0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 2, 0];
+
+        for ((idx, (tCount, qubitCount)) in Enumerated(Zip(tCounts, qubitCounts))) {
+            within {
+                AllowAtMostNCallsCA(tCount * 4, T, $"Too many T operations for constant {idx}");
+            } apply {
+                using ((input, output) = (Qubit[4], Qubit())) {
+                    within {
+                        AllowAtMostNQubits(qubitCount, $"Too many qubits allocated for constant {idx}");
+                    } apply {
+                        LessThanConstantUsingRippleCarry(IntAsBigInt(idx), LittleEndian(input), output);
+                    }
+                }
+            }
+        }
+    }
 }
 
 

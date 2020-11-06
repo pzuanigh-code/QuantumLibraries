@@ -105,3 +105,44 @@ class Geometry(List[Element]):
             charge=self.charge,
             coordinates=self.coordinates
         )
+
+
+def format_geometry(geometry: Geometry) -> str:
+    """Format geometry into text format
+
+    :param geometry: Geometry object
+    :type geometry: Geometry
+    :return: Geometry in text format, each element separated by given separator
+    :rtype: str
+    """
+    return "\n".join(el.to_xyz() for el in geometry)
+
+
+def format_geometry_from_mol(mol: "Mol") -> str:
+    """Get geometry in text format from RDKit molecule object
+
+    :param mol: RDKit molecule
+    :type mol: Mol
+    """
+    g = Geometry.from_mol(mol)
+    return format_geometry(g)
+
+
+def format_geometry_from_xyz(xyz: str) -> str:
+    """Generate geometry text format from XYZ data.
+    The formatting of the .xyz file format is as follows:
+
+        <number of atoms>
+        comment line
+        <element> <X> <Y> <Z>
+        ...
+
+    Source: https://en.wikipedia.org/wiki/XYZ_file_format.
+
+    :param xyz: XYZ file format
+    :type xyz: str
+    :return: Geometry in text format
+    :rtype: str
+    """
+    g = Geometry.from_xyz(xyz)
+    return format_geometry(g)

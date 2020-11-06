@@ -64,47 +64,6 @@ task tce {driver}
 """
 
 
-def format_geometry(geometry: Geometry):
-    """Format geometry into NWChem format
-
-    :param geometry: Molecular geometry
-    :type geometry: Geometry
-    :return: NWChem geometry format
-    :rtype: str
-    """
-    return "\n".join(el.to_xyz() for el in geometry)
-
-
-def format_geometry_from_mol(mol: "Mol"):
-    """Get geometry in NWChem format from RDKit molecule object
-
-    :param mol: RDKit molecule
-    :type mol: Mol
-    """
-    g = Geometry.from_mol(mol)
-    return format_geometry(g)
-
-
-def format_geometry_from_xyz(xyz: str):
-    """Generate geometry portion of NWChem file from XYZ data.
-    The formatting of the .xyz file format is as follows:
-
-        <number of atoms>
-        comment line
-        <element> <X> <Y> <Z>
-        ...
-
-    Source: https://en.wikipedia.org/wiki/XYZ_file_format.
-
-    :param xyz: XYZ file format
-    :type xyz: str
-    :return: Geometry in NWChem format
-    :rtype: str
-    """
-    g = Geometry.from_xyz(xyz)
-    return format_geometry(g)
-
-
 def num_electrons(mol: "Mol") -> int:
     """Calculate the number of electrons in the molecule
 
@@ -195,7 +154,7 @@ def create_input_deck(
         warnings.warn("Ignoring mol and using specified geometry string instead.")
     
     if isinstance(geometry, Geometry):
-        geometry = format_geometry(geometry)
+        geometry = g.format()ometry)
 
     nopen_str = f"nopen {nopen}" if nopen is not None else ""
 
